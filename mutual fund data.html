@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mutual fund scheme</title>
+</head>
+<body>
+    <h2>Mutual Fund Scheme Finder :</h2>
+<form id="schemeForm">
+    <label for="schemeCode">Mutual Fund Scheme Code:</label><br>
+    <input type="text" id="schemeCode" name="schemeCode" required><br><br>
+    <button type="submit">Submit</button>
+</form>
+
+<h2>Scheme Details :</h2>
+<p id="schemeDetails"></p>
+<script>
+    async function fetchScheme(schemeCode){
+        let url = `https://api.mfapi.in/mf/${schemeCode}`;
+        let response = await fetch(url);
+        if (response.ok) {
+            let schemeData = await response.json();
+            return schemeData;
+                }else{
+                    return null;
+                }
+    }
+    
+    document.getElementById('schemeForm').addEventListener('submit', async function(event){
+        event.preventDefault();
+        const schemeCode = document.getElementById('schemeCode').value;
+        const schemeData = await fetchScheme(schemeCode);
+
+        const schemeDetailsElement = document.getElementById('schemeDetails');
+        if(schemeData){
+            schemeDetailsElement.textContent = `Scheme Name: ${schemeData.meta.scheme_name}`;
+        }else {
+            schemeDetailsElement.textContent = 'Invalid Scheme Code';
+        }
+        document.getElementById('schemeForm').reset();
+    });
+    
+</script>
+</body>
+</html>

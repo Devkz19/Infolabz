@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University detail</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>University Details:</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>SR NO</th>
+                <th>University NAME</th>
+                <th>State </th>
+                <th>Website Link</th>
+            </tr>
+        </thead>
+        <tbody id="University">
+        </tbody>
+    </table>
+</body>
+      <script>
+        async function load() {
+            let url = "http://universities.hipolabs.com/search?country=india";
+            let myObject = await (await fetch(url)).json();
+            
+            let tbody = document.getElementById('University');
+
+            myObject.forEach((university, index) => {
+              
+                let row = `<tr>
+                    <td>${index +1}</td>
+                    <td>${university.name}</td>
+                     <td>${university['state-province'] || 'N/A'}</td>
+                    <td><a href="${university.web_pages[0]}" target="_blank">Visit Site</a></td>
+              </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+        window.onload = load;
+    </script>
+</html>

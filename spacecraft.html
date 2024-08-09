@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spacecraft Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Search for Spacecraft</h1>
+    <form id="searchForm">
+        <input type="text" id="searchInput" placeholder="Enter spacecraft name" required>
+        <button type="submit">Search</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        async function searchSpacecraft() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Searching...';
+
+            try {
+                const response = await fetch('https://isro.vercel.app/api/spacecrafts');
+                const data = await response.json();
+                const spacecrafts = data.spacecrafts;
+                const found = spacecrafts.some(spacecraft => spacecraft.name.toLowerCase() === query);
+
+                if (found) {
+                    resultDiv.innerHTML = `Found: ${spacecrafts.filter(spacecraft => spacecraft.name.toLowerCase() === query).map(spacecraft => spacecraft.name).join(', ')}`;
+                } else {
+                    resultDiv.innerHTML = 'No spacecraft found';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = 'Error fetching data';
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        document.getElementById('searchForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            searchSpacecraft();
+            document.getElementById('searchForm').reset();
+        });
+    </script>
+</body>
+</html>

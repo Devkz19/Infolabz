@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COVID-19 Data Fetcher</title>
+    <style>
+        form {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+<h2>COVID-19 Data Fetcher</h2>
+<form id="dateForm">
+    <label for="date">Date (yyyy-mm-dd):</label><br>
+    <input type="date" id="date" name="date" required><br><br>
+    <button type="submit">Submit</button>
+</form>
+
+<h2>COVID-19 Data</h2>
+<table id="dataTable">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>New Cases</th>
+            <th>New Deaths</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script>
+    async function load(date) {
+        let url = "https://data.covid19india.org/data.json";
+        let coviddata = await (await fetch(url)).json();
+       
+        const statewise = coviddata.cases_time_series;
+        const result = statewise.find(entry => entry.dateymd === date);
+
+        const tbody = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
+        tbody.innerHTML = ''; // Clear previous data
+        
+        if (result) {
+            const newRow = tbody.insertRow();
+            newRow.insertCell(0).innerHTML = result.dateymd;
+            newRow.insertCell(1).innerHTML = result.dailyconfirmed;
+            newRow.insertCell(2).innerHTML = result.dailydeceased;
+        } else {
+            const newRow = tbody.insertRow();
+            newRow.insertCell(0).innerHTML = 'No data found for the selected date.';
+            newRow.insertCell(1).innerHTML = '-';
+            newRow.insertCell(2).innerHTML = '-';
+        }
+    }
+
+    document.getElementById('dateForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const date = document.getElementById('date').value;
+        load(date);
+        document.getElementById('dateForm').reset();
+    });
+</script>
+
+</body>
+</html>
